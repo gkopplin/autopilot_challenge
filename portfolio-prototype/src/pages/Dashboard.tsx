@@ -10,10 +10,10 @@ export default function Dashboard() {
   useEffect(() => {
     setStocks(initialStocks)
     const interval = setInterval(() => {
-      setStocks(prev => updatePrices(prev))
+      setStocks(updatePrices(stocks))
     }, 2000)
     return () => clearInterval(interval)
-  }, [setStocks])
+  }, [setStocks, stocks])
 
   return (
     <div className="p-4 space-y-6">
