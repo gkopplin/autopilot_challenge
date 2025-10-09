@@ -1,27 +1,26 @@
-import { useState } from 'react'
-import PortfolioChart from './PortfolioChart'
-import usePortfolioStore from '../store/portfolioStore'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
-export default function StockHistory() {
-  const { portfolioHistory } = usePortfolioStore()
-  const [visibleData, setVisibleData] = useState(portfolioHistory.slice(-20))
-  const [startIndex, setStartIndex] = useState(Math.max(portfolioHistory.length - 20, 0))
+interface StockHistoryProps {
+  stock: { symbol: string; history: { date: string; price: number }[] }
+}
 
-  const loadMore = () => {
-    const newStart = Math.max(startIndex - 20, 0)
-    setVisibleData(portfolioHistory.slice(newStart, visibleData.length + startIndex))
-    setStartIndex(newStart)
-  }
+export default function StockHistory({ stock }: StockHistoryProps) {
+  const chartData = stock.history.map(entry => ({
+    date: new Date(entry.date).toLocaleTimeString(),
+    price: entry.price,
+  }))
 
   return (
-    <div className="p-4 bg-white rounded-2xl shadow-md space-y-4">
-      <h2 className="text-xl font-bold">Stock Price History</h2>
-      <PortfolioChart data={visibleData} />
-      {startIndex > 0 && (
-        <button onClick={loadMore} className="py-2 px-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition">
-          Load More
-        </button>
-      )}
+    <div className="p-4 bg-white rounded-xl shadow-md">
+      <h2 className="text-lg font-semibold mb-2">{stock.symbol} Price History</h2>
+      <ResponsiveContainer width="100%" height={200}>
+        <LineChart data={chartData}>
+          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+          <YAxis domain={['dataMin - 2', 'dataMax + 2']} />
+          <Tooltip formatter={(val: number) => `$${val.toFixed(2)}`} />
+          <Line type="monotone" dataKey="price" stroke="#3b82f6" dot={false} />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   )
 }

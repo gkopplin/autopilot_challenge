@@ -8,13 +8,16 @@ import PortfolioDetails from '../components/PortfolioDetails'
 import StockHistory from '../components/StockHistory'
 
 export default function Dashboard() {
-  const { stocks, setStocks, portfolioHistory, cash, addHistory, holdings } = usePortfolioStore()
+  const { stocks, setStocks, portfolioHistory, cash, holdings } = usePortfolioStore()
 
 useEffect(() => {
   setStocks(initialStocks)
 
   const interval = setInterval(() => {
-    const updated = updatePrices(stocks)
+    const { stocks: currentStocks, holdings, cash, addHistory } =
+      usePortfolioStore.getState()
+
+    const updated = updatePrices(currentStocks)
     setStocks(updated)
 
     // compute portfolio value for history
@@ -27,7 +30,7 @@ useEffect(() => {
   }, 2000)
 
   return () => clearInterval(interval)
-}, [setStocks, stocks, holdings, addHistory, cash])
+}, [setStocks])
 
 
   const portfolioValue = holdings.reduce((acc, h) => {
@@ -54,10 +57,14 @@ useEffect(() => {
       <TopStocksList stocks={stocks} />
       <PortfolioDetails />
       <PortfolioChart data={portfolioHistory} />
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {stocks.map(stock => <StockCard key={stock.symbol} stock={stock} />)}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {stocks.map(stock => (
+          <div key={stock.symbol} className="space-y-4">
+            <StockCard stock={stock} />
+            <StockHistory stock={stock} />
+          </div>
+        ))}
       </div>
-      <StockHistory />
     </div>
   )
 }
