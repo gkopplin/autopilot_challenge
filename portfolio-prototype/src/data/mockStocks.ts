@@ -10,9 +10,7 @@ export function updatePrices(stocks) {
   return stocks.map(s => ({
     ...s,
     change: (Math.random() - 0.5) * 2,
-    // price: Math.max(1, s.price + (Math.random() - 0.5) * 5),
-    price: s.price + (Math.random() - 0.5) * (s.price * 0.05) // ±5% of current price
-
+    price: Math.max(1, s.price + (Math.random() - 0.5) * 5),
   }))
 }
 

@@ -16,7 +16,6 @@ const usePortfolioStore = create<PortfolioStore>(set => ({
   stocks: [],
   portfolioHistory: [],
   cash: 10000,
-  // holdings: [],
   holdings: [
   { symbol: 'AAPL', quantity: 10 },
   { symbol: 'GOOGL', quantity: 5 },
