@@ -1,39 +1,46 @@
-import { create } from 'zustand'
-import { generateHistoricalData } from '../utils/generateHistoricalData'
+import {create} from 'zustand'
+import type { Stock } from '../data/mockStocks'
 
-const usePortfolioStore = create((set, get) => ({
-  balance: 10000,
-  holdings: [],
-  portfolioHistory: generateHistoricalData(),
+interface PortfolioStore {
+  stocks: Stock[]
+  portfolioHistory: { date: string; value: number }[]
+  cash: number
+  holdings: { symbol: string; quantity: number }[]
+  setStocks: (stocks: Stock[]) => void
+  buyStock: (symbol: string, quantity: number) => void
+  sellStock: (symbol: string, quantity: number) => void
+  addHistory: (value: number) => void
+}
+
+const usePortfolioStore = create<PortfolioStore>(set => ({
   stocks: [],
-  setStocks: (stocks) => set({ stocks }),
-  
-  buyStock: (symbol, price, shares) => {
-    const { holdings, balance } = get()
-    const cost = price * shares
-    if (balance < cost) return
-    const existing = holdings.find(h => h.symbol === symbol)
-    let newHoldings
-    if (existing) {
-      existing.avgPrice = (existing.avgPrice * existing.shares + cost) / (existing.shares + shares)
-      existing.shares += shares
-      newHoldings = [...holdings]
-    } else {
-      newHoldings = [...holdings, { symbol, shares, avgPrice: price }]
-    }
-    set({ holdings: newHoldings, balance: balance - cost })
-  },
+  portfolioHistory: [],
+  cash: 10000,
+  // holdings: [],
+  holdings: [
+  { symbol: 'AAPL', quantity: 10 },
+  { symbol: 'GOOGL', quantity: 5 },
+],
 
-  sellStock: (symbol, price, shares) => {
-    const { holdings, balance } = get()
-    const existing = holdings.find(h => h.symbol === symbol)
-    if (!existing || existing.shares < shares) return
-    existing.shares -= shares
-    const newHoldings = existing.shares === 0
-      ? holdings.filter(h => h.symbol !== symbol)
-      : [...holdings]
-    set({ holdings: newHoldings, balance: balance + price * shares })
-  },
+  setStocks: (stocks) => set({ stocks }),
+  buyStock: (symbol, quantity) =>
+    set(state => {
+      const stock = state.stocks.find(s => s.symbol === symbol)
+      if (!stock || state.cash < stock.price * quantity) return state
+      const newHolding = { symbol, quantity }
+      const holdings = [...state.holdings.filter(h => h.symbol !== symbol), newHolding]
+      return { holdings, cash: state.cash - stock.price * quantity }
+    }),
+  sellStock: (symbol, quantity) =>
+    set(state => {
+      const holding = state.holdings.find(h => h.symbol === symbol)
+      if (!holding || holding.quantity < quantity) return state
+      const stock = state.stocks.find(s => s.symbol === symbol)!
+      const newHolding = { symbol, quantity: holding.quantity - quantity }
+      const holdings = [...state.holdings.filter(h => h.symbol !== symbol), newHolding].filter(h => h.quantity > 0)
+      return { holdings, cash: state.cash + stock.price * quantity }
+    }),
+  addHistory: (value) => set(state => ({ portfolioHistory: [...state.portfolioHistory, { date: new Date().toISOString(), value }] })),
 }))
 
 export default usePortfolioStore
