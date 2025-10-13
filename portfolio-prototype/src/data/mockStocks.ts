@@ -103,16 +103,20 @@ export const initialStocks = [
 
 export const updatePrices = (stocks: Stock[]): Stock[] => {
   return stocks.map(stock => {
-    const change = (Math.random() - 0.5) * 2
-    const newPrice = Math.max(stock.price + change, 0)
+    const randomChange = (Math.random() - 0.5) * 2
+    const newPrice = Math.max(stock.price + randomChange, 0)
+    const change = newPrice - stock.price
     const newEntry = { date: new Date().toISOString(), price: newPrice }
+
     return {
       ...stock,
       price: newPrice,
+      change,
       history: [...stock.history, newEntry],
     }
   })
 }
+
 
 
 export interface Stock {
