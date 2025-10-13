@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { format } from 'date-fns'
+import { format} from 'date-fns'
 
 interface PriceEntry {
   date: string
@@ -24,14 +24,13 @@ export default function StockHistory({
   const [loadingBottom, setLoadingBottom] = useState(false)
   const [loadingTop, setLoadingTop] = useState(false)
   const [noMoreOlder, setNoMoreOlder] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<string>('')
 
   const mountedRef = useRef(false)
   const userScrolledRef = useRef(false)
 
   const sorted = useMemo(() => {
-    return [...history].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    )
+    return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }, [history])
 
   const lastSeenTotalRef = useRef<number>(0)
@@ -54,7 +53,6 @@ export default function StockHistory({
   // --- Detect newer data available ---
   useEffect(() => {
     if (!mountedRef.current || sorted.length === 0) return
-
     const newestDisplayedDate = buffer.length > 0 ? buffer[0].date : null
 
     if (newestDisplayedDate) {
@@ -85,9 +83,7 @@ export default function StockHistory({
 
       if (chunk.length > 0) {
         setBuffer(prev => {
-          const newRows = chunk.filter(
-            entry => !prev.some(p => p.date === entry.date)
-          )
+          const newRows = chunk.filter(entry => !prev.some(p => p.date === entry.date))
           return [...prev, ...newRows]
         })
         setOffset(nextEnd)
@@ -101,7 +97,7 @@ export default function StockHistory({
   }, [loadingBottom, noMoreOlder, offset, sorted, bufferSize])
 
   // --- Load newer data (scrolling up) ---
-  const loadNewer = useCallback(() => {
+   const loadNewer = useCallback(() => {
     if (loadingTop || pendingNewCount <= 0) return
 
     setLoadingTop(true)
@@ -155,10 +151,37 @@ export default function StockHistory({
     return () => el.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
+  const displayedRows = useMemo(() => {
+    if (!selectedDate) return buffer
+    return buffer.filter(entry => {
+      return typeof entry.date === 'string' && entry.date.slice(0, 10) === selectedDate
+    })
+  }, [buffer, selectedDate])
+
+
   const rowHeight = 40
 
   return (
-    <div className="flex flex-col border rounded-md">
+    <div className="flex flex-col border rounded-md p-2">
+      {/* Date picker */}
+      <div className="mb-2 text-center">
+        <label className="mr-2 font-medium">Filter by date:</label>
+        <input
+          type="date"
+          className="border rounded px-2 py-1"
+          value={selectedDate}
+          onChange={e => setSelectedDate(e.target.value)}
+        />
+        {selectedDate && (
+          <button
+            className="ml-2 px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={() => setSelectedDate('')}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
       {pendingNewCount > 0 && (
         <div className="px-3 py-1 text-sm text-center bg-yellow-50 text-yellow-800">
           {pendingNewCount} newer {pendingNewCount === 1 ? 'entry' : 'entries'} available — scroll to top to load
@@ -178,7 +201,7 @@ export default function StockHistory({
             </tr>
           </thead>
           <tbody>
-            {buffer.map((entry, idx) => (
+            {displayedRows.map((entry, idx) => (
               <tr key={`${entry.date}-${idx}`} className="border-b hover:bg-gray-50">
                 <td className="px-3 py-2">{format(new Date(entry.date), 'PPpp')}</td>
                 <td className="px-3 py-2 text-right">{entry.price.toFixed(2)}</td>
