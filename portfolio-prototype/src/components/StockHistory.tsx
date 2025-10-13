@@ -182,11 +182,16 @@ export default function StockHistory({
         )}
       </div>
 
-      {pendingNewCount > 0 && (
-        <div className="px-3 py-1 text-sm text-center bg-yellow-50 text-yellow-800">
-          {pendingNewCount} newer {pendingNewCount === 1 ? 'entry' : 'entries'} available — scroll to top to load
-        </div>
-      )}
+      <div
+        className={`h-[28px] transition-all duration-200 flex items-center justify-center text-sm text-center ${
+          pendingNewCount > 0
+            ? 'bg-yellow-50 text-yellow-800 opacity-100'
+            : 'opacity-0'
+        }`}
+      >
+        {pendingNewCount > 0 &&
+          `${pendingNewCount} newer ${pendingNewCount === 1 ? 'entry' : 'entries'} available — scroll to top to load`}
+      </div>
 
       <div
         ref={containerRef}
