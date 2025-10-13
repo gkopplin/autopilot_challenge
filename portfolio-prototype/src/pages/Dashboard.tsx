@@ -6,6 +6,7 @@ import StockCard from '../components/StockCard'
 import TopStocksList from '../components/TopStocksList'
 import PortfolioDetails from '../components/PortfolioDetails'
 import StockHistory from '../components/StockHistory'
+import TransactionHistory from '../components/TransactionHistory'
 
 export default function Dashboard() {
   const { stocks, setStocks, portfolioHistory, cash, holdings } = usePortfolioStore()
@@ -57,6 +58,7 @@ useEffect(() => {
       <TopStocksList stocks={stocks} />
       <PortfolioDetails />
       <PortfolioChart data={portfolioHistory} />
+      <TransactionHistory />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stocks.map(stock => (
           <div key={stock.symbol} className="space-y-4">
