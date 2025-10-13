@@ -18,7 +18,7 @@ export default function Step2StockTypes({ selected, onToggle, onNext }: StepProp
         {availableStockTypes.map(type => {
           const isSelected = selected.includes(type)
           return (
-            <div key={type} className="relative w-[110px] h-14">
+            <div key={type} className="relative w-[110px] h-14 m-[5px]">
               {/* Hidden accessible checkbox */}
               <input
                 type="checkbox"
@@ -30,7 +30,7 @@ export default function Step2StockTypes({ selected, onToggle, onNext }: StepProp
               <label
                 htmlFor={type}
                 className={clsx(
-                  'flex items-center justify-center h-full w-full rounded-2xl border cursor-pointer transition transform hover:scale-105',
+                  'flex items-center justify-center h-full w-full border cursor-pointer transition transform hover:scale-105 rounded-[6px]',
                   isSelected
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
                     : 'bg-white text-gray-700 border-gray-300 hover:shadow-sm'
@@ -46,7 +46,7 @@ export default function Step2StockTypes({ selected, onToggle, onNext }: StepProp
 
       <button
         onClick={onNext}
-        className="w-[240px] py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-105"
+        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-105 w-[240px] py-[6px] px-[6px] mt-[20px] rounded-[6px]"
       >
         Continue
       </button>

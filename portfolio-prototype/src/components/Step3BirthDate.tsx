@@ -16,7 +16,7 @@ export default function Step3BirthDate({ month, year, onMonthChange, onYearChang
           placeholder="Month (1-12)"
           value={month}
           onChange={e => onMonthChange(e.target.value)}
-          className="flex-1 px-4 py-3 rounded-2xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="flex-1 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition px-[6px] py-[6px] rounded-[6px] m-[3px]"
           min={1}
           max={12}
         />
@@ -25,14 +25,14 @@ export default function Step3BirthDate({ month, year, onMonthChange, onYearChang
           placeholder="Year"
           value={year}
           onChange={e => onYearChange(e.target.value)}
-          className="flex-1 px-4 py-3 rounded-2xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          className="flex-1 border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition px-[6px] py-[6px] rounded-[6px] m-[3px]"
           min={1900}
           max={new Date().getFullYear()}
         />
       </div>
       <button
         onClick={onNext}
-        className="w-[240px] py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-105"
+        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 hover:scale-105 w-[240px] py-[6px] px-[6px] rounded-[6px] mt-[20px] "
       >
         Finish
       </button>
