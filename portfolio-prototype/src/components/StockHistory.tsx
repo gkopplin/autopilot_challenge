@@ -29,7 +29,9 @@ export default function StockHistory({
   const userScrolledRef = useRef(false)
 
   const sorted = useMemo(() => {
-    return [...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    return [...history].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
   }, [history])
 
   const lastSeenTotalRef = useRef<number>(0)
@@ -51,15 +53,22 @@ export default function StockHistory({
 
   // --- Detect newer data available ---
   useEffect(() => {
-    if (!mountedRef.current) return
+    if (!mountedRef.current || sorted.length === 0) return
 
-    const currentTotal = sorted.length
-    const last = lastSeenTotalRef.current
-    if (currentTotal > last) {
-      setPendingNewCount(currentTotal - last)
+    const newestDisplayedDate = buffer.length > 0 ? buffer[0].date : null
+
+    if (newestDisplayedDate) {
+      const countNewer = sorted.filter(
+        entry => new Date(entry.date) > new Date(newestDisplayedDate)
+      ).length
+
+      setPendingNewCount(countNewer)
+    } else {
+      setPendingNewCount(sorted.length)
     }
-    lastSeenTotalRef.current = currentTotal
-  }, [sorted])
+
+    lastSeenTotalRef.current = sorted.length
+  }, [sorted, buffer])
 
   // --- Load older data (scrolling down) ---
   const loadOlder = useCallback(() => {
@@ -97,21 +106,28 @@ export default function StockHistory({
 
     setLoadingTop(true)
     setTimeout(() => {
-      const take = Math.min(pendingNewCount, bufferSize)
-      const newestChunk = sorted.slice(0, take)
-      if (newestChunk.length > 0) {
-        setBuffer(prev => [...newestChunk, ...prev])
-        setOffset(prevOffset => prevOffset + newestChunk.length)
-        setPendingNewCount(prev => prev - newestChunk.length)
+      const newestDisplayedDate = buffer.length > 0 ? buffer[0].date : null
+      const newerChunk = sorted.filter(
+        entry => newestDisplayedDate && new Date(entry.date) > new Date(newestDisplayedDate)
+      )
+
+      const take = Math.min(newerChunk.length, bufferSize)
+      const chunkToAdd = newerChunk.slice(0, take)
+
+      if (chunkToAdd.length > 0) {
+        setBuffer(prev => [...chunkToAdd, ...prev])
+        setOffset(prevOffset => prevOffset + chunkToAdd.length)
+        setPendingNewCount(prev => Math.max(prev - chunkToAdd.length, 0))
       }
 
+      // Maintain scroll position
       if (containerRef.current) {
         containerRef.current.scrollTop = containerRef.current.scrollTop + take * 40
       }
 
       setLoadingTop(false)
     }, 300)
-  }, [loadingTop, pendingNewCount, sorted, bufferSize])
+  }, [loadingTop, pendingNewCount, buffer, sorted, bufferSize])
 
   // --- Scroll handler ---
   const handleScroll = useCallback(() => {
