@@ -7,7 +7,7 @@ export default function StockCard({ stock }: { stock: Stock }) {
   const sellStock = usePortfolioStore(s => s.sellStock)
   const [shares, setShares] = useState(1)
   return (
-    <div className="p-4 bg-white rounded-2xl shadow flex flex-col gap-2">
+    <div className="p-4 bg-white rounded-2xl shadow flex flex-col gap-2 m-[20px]">
       <div className="font-bold">{stock.symbol}</div>
       <div>${stock.price.toFixed(2)}</div>
       {
