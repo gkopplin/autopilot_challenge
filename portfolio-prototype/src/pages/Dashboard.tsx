@@ -61,7 +61,7 @@ useEffect(() => {
         {stocks.map(stock => (
           <div key={stock.symbol} className="space-y-4">
             <StockCard stock={stock} />
-            <StockHistory stock={stock} />
+            <StockHistory history={stock.history} />
           </div>
         ))}
       </div>
