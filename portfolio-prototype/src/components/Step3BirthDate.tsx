@@ -12,7 +12,7 @@ export default function Step3BirthDate({ month, year, onMonthChange, onYearChang
       <h2 className="text-2xl font-bold text-gray-900 text-center">Your birth month & year</h2>
       <div className="flex space-x-3">
         <input
-          type="number"
+          type="text"
           placeholder="Month (1-12)"
           value={month}
           onChange={e => onMonthChange(e.target.value)}
@@ -21,7 +21,7 @@ export default function Step3BirthDate({ month, year, onMonthChange, onYearChang
           max={12}
         />
         <input
-          type="number"
+          type="text"
           placeholder="Year"
           value={year}
           onChange={e => onYearChange(e.target.value)}
