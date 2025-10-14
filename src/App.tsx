@@ -6,8 +6,8 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/autopilot_challenge" element={<Onboarding />} />
+        <Route path="/autopilo_challenge/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   )
