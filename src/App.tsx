@@ -7,7 +7,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/autopilot_challenge" element={<Onboarding />} />
-        <Route path="/autopilo_challenge/dashboard" element={<Dashboard />} />
+        <Route path="/autopilot_challenge/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   )
